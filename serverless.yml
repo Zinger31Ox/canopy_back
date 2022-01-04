@@ -1,0 +1,37 @@
+org: zinger31
+app: serverless-flask
+# serverless.yml
+ 
+service: serverless-flask
+ 
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-plugin-include-dependencies
+ 
+custom:
+  wsgi:
+    app: server.app
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: non-linux
+ 
+provider:
+  name: aws
+  runtime: python3.8
+  stage: dev
+  region: eu-central-1
+ 
+	
+package:
+  exclude:
+    - node_modules/** 
+    - venv/** 
+   
+
+functions:
+  app:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'

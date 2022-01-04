@@ -1,0 +1,100 @@
+{
+    "date": {
+        "name": "Date",
+        "formula": null,
+        "type": "datetime"
+    },
+    "act_forecast": {
+        "name": "Actual-Forecast",
+        "formula": null,
+        "type": "type"
+    },
+    "gri": {
+        "name": "GRI", 
+        "formula": null,
+        "type": "dollar_cents",
+        "sign": "positive"
+    },
+    "service_charges": {
+        "name": "Service Charges",
+        "formula": null,
+        "unit": "dollar_cents",
+        "sign": "negative"
+    },
+    "noi": {
+        "name": "NOI",
+        "formula": null,
+        "type": "dollar_cents",
+        "sign": "positive"
+    },
+    "ebitda": {
+        "name": "EBITDA",
+        "type": "dollar_cents",
+        "formula": null,
+        "sign": "positive"
+    },
+    "capex": {
+        "name": "Capex",
+        "type": "dollar_cents",
+        "formula": null,
+        "sign": "negative"
+    },
+    "acquisition": {
+        "name": "Net Acquisition Price",
+        "type": "dollar_cents",
+        "formula": null,
+        "sign": "negative"
+    },
+    "disposal": {
+        "name": "Net Disposal Price",
+        "type": "dollar_cents",
+        "formula": null,
+        "sign": "positive"
+    },
+    "d_and_a": {
+        "name": "D&A",
+        "type": "dollar_cents",
+        "formula": null,
+        "sign": "negative"
+    },
+    "senior_debt_starting_notional": {
+        "name": "Senior Debt Starting Notional",
+        "type": "dollar_cents",
+        "formula": null  
+    },
+    "senior_debt_interest": {
+        "name": "Senior Debt Interest",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "senior_debt_interest_rate": {
+        "name": "Senior Debt Interest Rate",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "junior_debt_starting_notional": {
+        "name": "Junior Debt Starting Notional",
+        "type": "dollar_cents",
+        "formula": null  
+    },
+    "junior_debt_interest": {
+        "name": "Junior Debt Interest",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "junior_debt_interest_rate": {
+        "name": "Junior Debt Interest Rate",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "income_tax": {
+        "name": "Income Tax",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "gross_rent_yield": {
+        "name": "Gross Rent Yield",
+        "type": "dollar_cents",
+        "formula": null
+    }
+}
