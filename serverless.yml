@@ -7,7 +7,10 @@ service: serverless-flask
 plugins:
   - serverless-python-requirements
   - serverless-wsgi
-  - serverless-plugin-include-dependencies
+  - serverless-plugin-include-dependencies 
+  - serverless-apigw-binary 	
+  - serverless-offline
+
  
 custom:
   wsgi:
@@ -15,23 +18,43 @@ custom:
     packRequirements: false
   pythonRequirements:
     dockerizePip: non-linux
+  apigwBinary:
+    types:
+      - '*/*'
  
 provider:
   name: aws
   runtime: python3.8
   stage: dev
   region: eu-central-1
- 
-	
+  timeout: 15
+  environment:
+    TARGET_BUCKET: mycanopybucket
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+        - s3:PutObject
+        - s3:DeleteObject
+      Resource: 'arn:aws:s3:::mycanopybucket/*'
+
 package:
   exclude:
     - node_modules/** 
     - venv/** 
    
-
 functions:
   app:
     handler: wsgi_handler.handler
+    timeout: 15
     events:
       - http: ANY /
       - http: 'ANY {proxy+}'
+
+
+Resources:
+    S3Assets:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: mycanopybucket

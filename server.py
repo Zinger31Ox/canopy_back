@@ -11,28 +11,32 @@ import werkzeug
 import pandas as pd
 from openpyxl import load_workbook
 
+import sys
+
+import boto3
+from botocore.exceptions import ClientError
 
 from dataframe_utils import load_excel, remap_columns, save_as_excel
-
 
 app = Flask(__name__)
 api = Api(app)
 CORS(app)
 
+s3_client = boto3.client('s3')
 
 # FILES_ROOT = Path(os.getenv("FILES_ROOT"))
-# FILES_ROOT = Path(__file__).parent  v.local
-FILES_ROOT = Path("/tmp/excel_central") # v.for lambda temp folder
+# FILES_ROOT = Path(__file__).parent  # v.local
+FILES_ROOT = Path("/tmp") # v.for lambda temp folder
 
-#CONFIG_PATH = Path(__file__).parent / "config.json"   v.local
-CONFIG_PATH = Path("/tmp/excel_central/config.json")      # v.for lambda temp folder
+CONFIG_PATH = Path(__file__).parent / "config.json"  #  v.local
 with open(CONFIG_PATH, "r") as fp:
     CONFIG = json.load(fp)
 
+bucket = os.environ['TARGET_BUCKET'] if os.environ.get('LAMBDA_TASK_ROOT') is not None else "mycanopybucket"
 
 @app.route("/")
 def hello():
-    return "Canopy: Ad Astra Per Aspera!"
+    return "Canopy: Ad Astra Per Aspera! "+ ("We are offline" if os.environ.get('LAMBDA_TASK_ROOT') is None else "We are online")
 
 
 class UploadFile(Resource):
@@ -48,8 +52,18 @@ class UploadFile(Resource):
         args = self.parser.parse_args()
         file = args["file"]
         file.save(FILES_ROOT / "input.xlsx")
-
+        print("Is input in tmp? " + str(os.path.isfile('/tmp/input.xlsx')), file=sys.stderr)
+        # app.logger.error(print(os.path.isfile('/tmp/input.xlsx'))
+       
+        """
+        Adding the S3 Upload
+        """
+        try:
+            s3_client.upload_file(str(FILES_ROOT)+"/input.xlsx", bucket, "input.xlsx")
+        except ClientError as error:
+            raise error
         return self._sheetnames(file)
+
 
     def get(self):
         """
@@ -59,7 +73,14 @@ class UploadFile(Resource):
         file_path = FILES_ROOT / "input.xlsx"
         if file_path.exists():
             return self._sheetnames(file_path)
-        return self._sheetnames()
+        else:
+            try:
+              s3_client.download_file(bucket, "input.xlsx", str(FILES_ROOT)+ "/input.xlsx")
+              return self._sheetnames(file_path)
+            except ClientError as error:
+               print("No input file retrieved from S3", file=sys.stderr)
+               return self._sheetnames()
+            
 
     def _sheetnames(self, file=None):
         if file is not None:
@@ -85,7 +106,14 @@ class ProcessExcel(Resource):
         if file_path.exists():
             dataframe = pd.read_feather(file_path)
             return self._header(dataframe)
-        return self._header()
+        else:
+            try:
+              s3_client.download_file(bucket, "input.xlsx", str(FILES_ROOT)+ "/input.xlsx")
+              dataframe = pd.read_feather(file_path)
+              return self._header(dataframe)
+            except ClientError as error:
+                print("No input file retrieved from S3", file=sys.stderr)
+                return self._header()        
 
     def post(self):
         """
