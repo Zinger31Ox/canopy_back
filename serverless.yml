@@ -11,17 +11,20 @@ plugins:
   - serverless-apigw-binary 	
   - serverless-offline
 
- 
 custom:
   wsgi:
     app: server.app
     packRequirements: false
   pythonRequirements:
     dockerizePip: non-linux
+    slim: true
+    layer: true
   apigwBinary:
     types:
       - '*/*'
- 
+  serverless-offline:
+    useDocker: true
+
 provider:
   name: aws
   runtime: python3.8
@@ -30,23 +33,42 @@ provider:
   timeout: 15
   environment:
     TARGET_BUCKET: mycanopybucket
-
+  vpc:
+    securityGroupIds:
+      - sg-048645325de90a1af
+    subnetIds:
+      - subnet-089c452e2d3fbbe0a
+      - subnet-09bf25f80d82a8ac2
+      - subnet-0c96b1f59d2c4ea6d
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
+        - s3:ListBucket
         - s3:GetObject
+        - s3:GetObjectVersion
         - s3:PutObject
         - s3:DeleteObject
-      Resource: 'arn:aws:s3:::mycanopybucket/*'
-
+        - s3:DeleteObjectVersion
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DeleteNetworkInterface
+        - ec2:DescribeSecurityGroups
+        - ec2:DescribeSubnets
+        - ec2:DescribeVpcs
+      Resource: 
+        - 'arn:aws:s3:::mycanopybucket/*'
+        - 'arn:aws:s3:::mycanopybucket'
 package:
   exclude:
     - node_modules/** 
     - venv/** 
+    - .serverless/**
    
 functions:
   app:
     handler: wsgi_handler.handler
+    layers:
+      - Ref: PythonRequirementsLambdaLayer
     timeout: 15
     events:
       - http: ANY /

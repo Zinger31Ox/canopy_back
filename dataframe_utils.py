@@ -31,6 +31,7 @@ def strip_spaces(dataframe):
         return v
     return dataframe.applymap(conditional_strip)
 
+#find the first non-empty row
 def find_header(dataframe):
     for (index, row) in dataframe.iterrows():
         if row.map(lambda v: isinstance(v, str)).any():
@@ -59,7 +60,9 @@ def drop_null_rows(dataframe):
 
 def drop_nulls(dataframe):
     dataframe_notnull_rows = drop_null_cols(dataframe)
-    return drop_null_rows(dataframe_notnull_rows)
+    dataframe_notnull_cols = drop_null_rows(dataframe_notnull_rows)
+
+    return dataframe_notnull_cols
 
     
 def load_excel(file, sheet_name=None, header_position=None):
@@ -87,7 +90,8 @@ def remap_columns(dataframe, mapping, drop_unmapped=True):
 
     if drop_unmapped:
         cols_to_drop = list(set(remapped_dataframe) - set(mapping.values()))
-        return remapped_dataframe.drop(cols_to_drop, axis=1)
+            # WH added another round of drop nullcols 
+        return drop_nulls(remapped_dataframe.drop(cols_to_drop, axis=1)).reset_index(drop=True)
     return remapped_dataframe
 
 def copy_excel_cell_range(
