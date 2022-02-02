@@ -91,6 +91,16 @@
         "name": "Income Tax",
         "type": "dollar_cents",
         "formula": null
+    },    
+    "levered_cf": {
+        "name": "Levered CF",
+        "type": "dollar_cents",
+        "formula": null
+    },
+    "unlevered_cf": {
+        "name": "Unlevered CF",
+        "type": "dollar_cents",
+        "formula": null
     },
     "gross_rent_yield": {
         "name": "Gross Rent Yield",

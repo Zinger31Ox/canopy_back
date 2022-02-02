@@ -33,13 +33,16 @@ provider:
   timeout: 15
   environment:
     TARGET_BUCKET: mycanopybucket
-  vpc:
-    securityGroupIds:
-      - sg-048645325de90a1af
-    subnetIds:
-      - subnet-089c452e2d3fbbe0a
-      - subnet-09bf25f80d82a8ac2
-      - subnet-0c96b1f59d2c4ea6d
+  # vpc:
+  #   securityGroupIds:
+  #     - sg-048645325de90a1af
+  #   subnetIds:
+  #     - subnet-089c452e2d3fbbe0a
+  #     - subnet-09bf25f80d82a8ac2
+  #     - subnet-0c96b1f59d2c4ea6d
+  #     - subnet-0d5b414165573cf93
+  #     - subnet-063418602ae09aea1
+  #     - subnet-09b7db93af013bdda
   iamRoleStatements:
     - Effect: "Allow"
       Action:
